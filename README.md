@@ -1,40 +1,37 @@
-# Welcome to Remix!
+# CaseCobra - A Modern Fullstack E-Commerce Shop for Custom Phone Cases with RemixJS
 
-- 📖 [Remix docs](https://remix.run/docs)
+Built with the RemixJS, Postgres, TypeScript, Tailwind & Kinde Auth
 
-## Development
+Original Project By [Josh](https://github.com/joschan21), this is only a modified version from nextjs to remixjs
 
-Run the dev server:
+![Project Image](https://github.com/joschan21/casecobra/blob/master/public/thumbnail.png)
 
-```shellscript
-npm run dev
+## Features
+
+- 🛠️ Complete shop built from scratch in Next.js 14
+- 💻 Beautiful landing page included
+- 🎨 Custom artworks made by a professional illustrator
+- 💳 Secret admin dashboard to manage orders
+- 🖥️ Drag-and-drop file uploads
+- 🛍️ Customers can purchase directly from you
+- 🌟 Clean, modern UI on top of shadcn-ui
+- 🛒 Completely custom phone case configurator
+- 🔑 Authentication using Kinde
+- ✉️ Beautiful thank-you email after purchase
+- ✅ Apple-inspired configuration design
+- ⌨️ 100% written in TypeScript
+- 🎁 ...much more
+
+## Getting started
+
+To get started with this project, run
+
+```bash
+  git clone https://github.com/Mateo-EV/casecobra-remix.git
 ```
 
-## Deployment
+and copy the .env.example variables into a separate .env file, fill them out & and that's all you need to get started!
 
-First, build your app for production:
+## License
 
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+[MIT](https://choosealicense.com/licenses/mit/)
