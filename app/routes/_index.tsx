@@ -89,7 +89,7 @@ export default function Index() {
                 alt="line"
                 className="absolute w-20 -left-6 -bottom-6 select-none"
               />
-              <Phone className="w-64" img="/testimonials/1.jpg" />
+              <Phone className="w-64 z-10" img="/testimonials/1.jpg" />
             </div>
           </div>
         </MaxWidthWrapper>
@@ -224,7 +224,7 @@ export default function Index() {
                 />
               </div>
 
-              <Phone className="w-60" img="/horse_phone.jpg" />
+              <Phone className="w-60 z-10" img="/horse_phone.jpg" />
             </div>
           </div>
 

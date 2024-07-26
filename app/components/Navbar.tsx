@@ -2,13 +2,11 @@ import { Link } from "@remix-run/react"
 import { MaxWidthWrapper } from "./MaxWidthWrapper"
 import { buttonVariants } from "./ui/button"
 import { ArrowRightIcon } from "lucide-react"
-import { type KindeUser } from "@kinde-oss/kinde-remix-sdk/types"
+import { useAuth } from "~/hooks/auth"
 
-type NavbarProps = {
-  user: (KindeUser & { isAdmin: boolean }) | null
-}
+export const Navbar = () => {
+  const { user } = useAuth()
 
-export const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="sticky z-50 h-14 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -42,6 +40,8 @@ export const Navbar = ({ user }: NavbarProps) => {
                 ) : null}
                 <Link
                   to="/configure/upload"
+                  unstable_viewTransition
+                  prefetch="viewport"
                   className={buttonVariants({
                     size: "sm",
                     className: "hidden sm:flex items-center gap-1"

@@ -16,6 +16,7 @@ import { Footer } from "./components/Footer"
 import { Navbar } from "./components/Navbar"
 import { Toaster } from "./components/ui/toaster"
 import "./tailwind.css"
+import { AuthProvider } from "./providers/AuthProvider"
 
 export const meta: MetaFunction = () => {
   return [
@@ -47,11 +48,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="font-body">
-        <Navbar user={data!.user} />
-        <main className="flex grainy-light flex-col min-h-[calc(100vh-3.5rem-1px)]">
-          <div className="flex-1 flex flex-col h-full">{children}</div>
-          <Footer />
-        </main>
+        <AuthProvider user={data?.user || null}>
+          <Navbar />
+          <main className="flex grainy-light flex-col min-h-[calc(100vh-3.5rem-1px)]">
+            <div className="flex-1 flex flex-col h-full">{children}</div>
+            <Footer />
+          </main>
+        </AuthProvider>
         <Toaster />
         <ScrollRestoration />
         <Scripts />

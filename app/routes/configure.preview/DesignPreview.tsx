@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigation, useSubmit } from "@remix-run/react"
+import { useNavigation, useSubmit } from "@remix-run/react"
 import { ArrowRightIcon, CheckIcon } from "lucide-react"
 import { useState } from "react"
 import { AutoConfetti } from "~/components/AutoConfetti"
@@ -7,8 +7,8 @@ import { Phone } from "~/components/Phone"
 import { Button } from "~/components/ui/button"
 import { BASE_PRICE, PRODUCT_PRICES } from "~/config/products"
 import { Configuration } from "~/db/schema"
+import { useAuth } from "~/hooks/auth"
 import { cn } from "~/lib/shadcn"
-import { type loader as loaderRoute } from "~/root"
 import { formatPrice } from "~/utils/price"
 import { COLORS, MODELS } from "~/validators/option-validator"
 
@@ -33,12 +33,12 @@ export const DesignPreview = ({ configuration }: DesignPreviewProps) => {
   const { state } = useNavigation()
   const isLoading = state === "submitting" || state === "loading"
 
-  const data = useLoaderData<typeof loaderRoute>()
+  const { user } = useAuth()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const submit = useSubmit()
 
   const handleCheckout = () => {
-    if (data?.user) {
+    if (user) {
       submit(null, { method: "POST" })
     } else {
       localStorage.setItem("configurationId", id)
