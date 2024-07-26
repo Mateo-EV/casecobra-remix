@@ -33,6 +33,8 @@ export const Navbar = () => {
                 {user.isAdmin ? (
                   <Link
                     to="/dashboard"
+                    unstable_viewTransition
+                    prefetch="viewport"
                     className={buttonVariants({ size: "sm", variant: "ghost" })}
                   >
                     Dashboard ✨

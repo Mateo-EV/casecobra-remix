@@ -17,13 +17,9 @@ import { Navbar } from "./components/Navbar"
 import { Toaster } from "./components/ui/toaster"
 import "./tailwind.css"
 import { AuthProvider } from "./providers/AuthProvider"
+import { constructMetadata } from "./utils/metadata"
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Casecobra" },
-    { name: "description", content: "Welcome to casecobra" }
-  ]
-}
+export const meta: MetaFunction = constructMetadata()
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { getUser } = await getKindeSession(request)

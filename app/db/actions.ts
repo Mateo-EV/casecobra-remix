@@ -1,4 +1,6 @@
-import { and, eq, type InferInsertModel } from "drizzle-orm"
+import { and, desc, eq, gte, sum, type InferInsertModel } from "drizzle-orm"
+import type Stripe from "stripe"
+import { db } from "."
 import {
   billingAddresses,
   configurations,
@@ -6,9 +8,6 @@ import {
   shippingAddresses,
   users
 } from "./schema"
-import { db } from "."
-import type Stripe from "stripe"
-import { createId } from "@paralleldrive/cuid2"
 
 export const createConfiguration = async (
   data: InferInsertModel<typeof configurations>
@@ -51,6 +50,16 @@ export const updateOrder = async (
   return res
 }
 
+export const getOrderData = (id: string, userId: string) =>
+  db.query.orders.findFirst({
+    where: and(eq(orders.id, id), eq(orders.userId, userId)),
+    with: {
+      billingAddress: true,
+      configuration: true,
+      shippingAddress: true
+    }
+  })
+
 export const getOrderByUserAndConfiguration = (
   userId: string,
   configurationId: string
@@ -72,7 +81,7 @@ export const createUser = async (data: InferInsertModel<typeof users>) => {
   return res
 }
 
-export const setOrderSessionPaid = ({
+export const setOrderSessionPaid = async ({
   session,
   shippingAddressData,
   billingAddressData,
@@ -84,31 +93,95 @@ export const setOrderSessionPaid = ({
   orderId: string
 }) => {
   return db.transaction(async tx => {
-    const shippingAddressId = createId()
-    await tx.insert(shippingAddresses).values({
-      id: shippingAddressId,
-      name: session.customer_details!.name!,
-      city: shippingAddressData.city!,
-      country: shippingAddressData.country!,
-      postalCode: shippingAddressData.postal_code!,
-      street: shippingAddressData.line1!,
-      state: shippingAddressData.state
-    })
+    const [shippingAddressCreated] = await tx
+      .insert(shippingAddresses)
+      .values({
+        name: session.customer_details!.name!,
+        city: shippingAddressData.city!,
+        country: shippingAddressData.country!,
+        postalCode: shippingAddressData.postal_code!,
+        street: shippingAddressData.line1!,
+        state: shippingAddressData.state
+      })
+      .returning()
 
-    const billingAddressId = createId()
-    await tx.insert(billingAddresses).values({
-      id: billingAddressId,
-      name: session.customer_details!.name!,
-      city: billingAddressData.city!,
-      country: billingAddressData.country!,
-      postalCode: billingAddressData.postal_code!,
-      street: billingAddressData.line1!,
-      state: billingAddressData.state
-    })
+    const [billingAddressCreated] = await tx
+      .insert(billingAddresses)
+      .values({
+        name: session.customer_details!.name!,
+        city: billingAddressData.city!,
+        country: billingAddressData.country!,
+        postalCode: billingAddressData.postal_code!,
+        street: billingAddressData.line1!,
+        state: billingAddressData.state
+      })
+      .returning()
 
-    await tx
+    const [orderUpdated] = await tx
       .update(orders)
-      .set({ isPaid: true, shippingAddressId, billingAddressId })
+      .set({
+        isPaid: true,
+        shippingAddressId: shippingAddressCreated.id,
+        billingAddressId: billingAddressCreated.id
+      })
       .where(eq(orders.id, orderId))
+      .returning()
+
+    return {
+      ...orderUpdated,
+      shippingAddress: shippingAddressCreated,
+      billingAddress: billingAddressCreated
+    }
   })
+}
+
+export const getWeeklyOrders = () => {
+  return db.query.orders.findMany({
+    where: and(
+      eq(orders.isPaid, true),
+      gte(
+        orders.createdAt,
+        new Date(new Date().setDate(new Date().getDate() - 7))
+      )
+    ),
+    orderBy: [desc(orders.createdAt)],
+    with: {
+      user: true,
+      shippingAddress: true
+    }
+  })
+}
+
+export const getLastWeekTotalAmount = async () => {
+  const [res] = await db
+    .select({ sum: sum(orders.amount) })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.isPaid, true),
+        gte(
+          orders.createdAt,
+          new Date(new Date().setDate(new Date().getDate() - 7))
+        )
+      )
+    )
+
+  return res.sum
+}
+
+export const getLastMonthTotalAmount = async () => {
+  const [res] = await db
+    .select({ sum: sum(orders.amount) })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.isPaid, true),
+        gte(
+          orders.createdAt,
+          new Date(new Date().setDate(new Date().getDate() - 30))
+        )
+      )
+    )
+
+  return res.sum
 }

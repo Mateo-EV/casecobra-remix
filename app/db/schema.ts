@@ -72,7 +72,9 @@ export const orders = pgTable("order", {
   userId: varchar("userId", { length: 191 }).notNull(),
   shippingAddressId: varchar("shippingAddressId", { length: 191 }),
   billingAddressId: varchar("billingAddressId", { length: 191 }),
-  amount: numeric("amount", { precision: 8, scale: 2 }).$type<number>(),
+  amount: numeric("amount", { precision: 8, scale: 2 })
+    .$type<number>()
+    .notNull(),
   isPaid: boolean("isPaid").notNull().default(false),
   status: varchar("status", { length: 20 })
     .$type<OrderStatus>()

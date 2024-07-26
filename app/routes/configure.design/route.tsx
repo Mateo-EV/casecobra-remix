@@ -39,15 +39,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const formdata = await request.formData()
 
-  const {
-    success,
-    data: config,
-    error
-  } = validator.safeParse(Object.fromEntries(formdata))
+  const { success, data: config } = validator.safeParse(
+    Object.fromEntries(formdata)
+  )
 
   if (!success) {
-    console.log(error)
-
     throw new Response("Data Invalid", { status: 400 })
   }
 
